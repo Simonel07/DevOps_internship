@@ -1,0 +1,34 @@
+services:
+  frontend:
+    build: .
+    image: login-app
+    ports:
+      - "443:5000"
+    networks:
+      front-tier:
+        ipv4_address: 10.0.2.2
+      back-tier:
+        ipv4_address: 172.20.0.3
+
+  backend:
+    build: ./MongoDB
+    image: mongod
+    volumes:
+      - db-data:/etc/data
+    networks:
+      back-tier:
+        ipv4_address: 172.20.0.2 
+      
+volumes:
+  db-data:
+
+networks:
+  # The presence of these objects is sufficient to define them
+  front-tier: 
+    ipam:
+      config:
+        - subnet: 10.0.2.0/16
+  back-tier: 
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
